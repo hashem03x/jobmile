@@ -30,7 +30,12 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const EMPLOYMENT_TYPES = ["Full-time", "Part-time", "Contract", "Internship"];
-const EXPERIENCE_LEVELS = ["Entry", "Mid", "Senior", "Lead"];
+const EXPERIENCE_LEVELS = [
+  "Entry-Level",
+  "Mid-Level",
+  "Senior-Level",
+  "Lead-Level",
+];
 
 function Jobs() {
   const [jobs, setJobs] = useState([]);
@@ -47,7 +52,7 @@ function Jobs() {
   const [location, setLocation] = useState("");
   const [salaryRange, setSalaryRange] = useState([0, 100000]);
   const [salaryMinMax, setSalaryMinMax] = useState([0, 100000]);
-  const {token} = useAuth()
+  const { token } = useAuth();
   useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -91,9 +96,9 @@ function Jobs() {
     setJobDetails(null);
     setApplied(false);
   };
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const handleApply = async (jobId) => {
-    navigate(`/job/${jobId}/apply`)
+    navigate(`/job/${jobId}/apply`);
   };
 
   // Filtering logic
@@ -107,7 +112,7 @@ function Jobs() {
       ? job.employment_type === employmentType
       : true;
     const matchesExperience = experienceLevel
-      ? job.experience_level === experienceLevel
+      ? job.experience_level.toLowerCase() === experienceLevel
       : true;
     const matchesLocation = location
       ? job.location.toLowerCase().includes(location.toLowerCase())
@@ -130,7 +135,7 @@ function Jobs() {
       </Typography>
       <Grid container spacing={3}>
         {/* Filters Sidebar */}
-        <Grid item size={{xs: 12, sm: 12, md: 3, lg: 3}}>
+        <Grid item size={{ xs: 12, sm: 12, md: 3, lg: 3 }}>
           <Box
             sx={{
               p: 2,
@@ -203,7 +208,7 @@ function Jobs() {
           </Box>
         </Grid>
         {/* Main Jobs Grid */}
-        <Grid item size={{xs: 12, sm: 12, md: 9, lg: 9}}>
+        <Grid item size={{ xs: 12, sm: 12, md: 9, lg: 9 }}>
           {/* Search Bar */}
           <Box mb={3}>
             <TextField
@@ -438,7 +443,7 @@ function Jobs() {
                   fontSize: 18,
                   letterSpacing: 1,
                 }}
-                onClick={()=>handleApply(jobDetails.id)}
+                onClick={() => handleApply(jobDetails.id)}
                 disabled={applyLoading || applied}
               >
                 {applied
