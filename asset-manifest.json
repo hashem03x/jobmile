@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/jobsy/static/css/main.e0a1edae.css",
-    "main.js": "/jobsy/static/js/main.6c48aa93.js",
+    "main.js": "/jobsy/static/js/main.da69d8d4.js",
     "index.html": "/jobsy/index.html",
     "main.e0a1edae.css.map": "/jobsy/static/css/main.e0a1edae.css.map",
-    "main.6c48aa93.js.map": "/jobsy/static/js/main.6c48aa93.js.map"
+    "main.da69d8d4.js.map": "/jobsy/static/js/main.da69d8d4.js.map"
   },
   "entrypoints": [
     "static/css/main.e0a1edae.css",
-    "static/js/main.6c48aa93.js"
+    "static/js/main.da69d8d4.js"
   ]
 }
