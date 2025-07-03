@@ -3,11 +3,12 @@ import { Box, Typography, LinearProgress } from "@mui/material";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Routes,
   Route,
   Navigate,
 } from "react-router-dom";
+
 import LoginSignup from "./components/pages/LoginSignup";
 import PrivateRoute from "./components/routes/PrivateRoute";
 import PublicRoute from "./components/routes/PublicRoute";
@@ -88,7 +89,10 @@ function App() {
         </Route>
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard/candidate" element={<CandidateDashboard />} />
-          <Route path="/dashboard/candidate/jobs" element={<CandidateDashboard />} />
+          <Route
+            path="/dashboard/candidate/jobs"
+            element={<CandidateDashboard />}
+          />
           <Route path="/dashboard/company" element={<CompanyDashboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/jobs" element={<Jobs />} />
