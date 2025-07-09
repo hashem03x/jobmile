@@ -18,9 +18,9 @@ import WorkIcon from "@mui/icons-material/Work";
 import PhoneIcon from "@mui/icons-material/Phone";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { useUser } from "../context/UserContext";
-import { useAuth } from "../context/AuthContext";
-import { BASE_API } from "../../utils/api";
+import { useUser } from '../../context/UserContext';
+import { useAuth } from '../../context/AuthContext';
+import { BASE_API } from '../../../utils/api';
 
 function Profile() {
   const { userProfile: profile, userLoading: loading } = useUser();

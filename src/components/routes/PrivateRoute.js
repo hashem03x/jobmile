@@ -8,13 +8,14 @@ export default function PrivateRoute({ children, ...rest }) {
   const location = useLocation();
   if (loading) return null;
   if (!isAuthenticated) return <Navigate to="/login" replace />;
-  // Route protection by user_type
   const path = location.pathname;
-  if (user?.user_type === "candidate" && path.startsWith("/dashboard/company")) {
-    return <Navigate to="/dashboard/candidate" replace />;
+  // Only allow candidate users to access /candidate/*
+  if (user?.user_type === "candidate" && path.startsWith("/company")) {
+    return <Navigate to="/candidate/home" replace />;
   }
-  if (user?.user_type === "company" && path.startsWith("/dashboard/candidate")) {
-    return <Navigate to="/dashboard/company" replace />;
+  // Only allow company users to access /company/*
+  if (user?.user_type === "company" && path.startsWith("/candidate")) {
+    return <Navigate to="/company/home" replace />;
   }
   return children ? (
     children

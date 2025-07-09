@@ -12,6 +12,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
 import HomeIcon from "@mui/icons-material/Home";
 import WorkIcon from "@mui/icons-material/Work";
+import BarChartIcon from "@mui/icons-material/BarChart";
 import PersonIcon from "@mui/icons-material/Person";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { NavLink } from "react-router-dom";
@@ -25,21 +26,24 @@ export default function AppMenu() {
   const menuLinks =
     user === "candidate"
       ? [
-          { label: "Home", to: "/dashboard/candidate", icon: <HomeIcon /> },
-          { label: "Jobs", to: "/jobs", icon: <WorkIcon /> },
-          { label: "Profile", to: "/profile", icon: <PersonIcon /> },
+          { label: "Home", to: "/candidate/home", icon: <HomeIcon /> },
+          { label: "Jobs", to: "/candidate/jobs", icon: <WorkIcon /> },
+          { label: "Profile", to: "/candidate/profile", icon: <PersonIcon /> },
           {
             label: "Logout",
+            to: "/login",
             icon: <LogoutIcon />,
+
             click: () => logout(),
           },
         ]
       : [
-          { label: "Home", to: "/dashboard/company", icon: <HomeIcon /> },
-          { label: "Jobs", to: "/jobs", icon: <WorkIcon /> },
-          { label: "Profile", to: "/profile", icon: <PersonIcon /> },
+          { label: "Home", to: "/company/home", icon: <HomeIcon /> },
+          { label: "Stats", to: "/company/stats", icon: <BarChartIcon /> },
+          { label: "Profile", to: "/company/profile", icon: <PersonIcon /> },
           {
             label: "Logout",
+            to: "/login",
             icon: <LogoutIcon />,
             click: () => logout(),
           },

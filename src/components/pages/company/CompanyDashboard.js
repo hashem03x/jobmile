@@ -22,8 +22,13 @@ import {
   FormControl,
   Autocomplete,
   Skeleton,
+  IconButton,
+  Tooltip,
+  CircularProgress,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
+import CloseIcon from "@mui/icons-material/Close";
 import { useAuth } from "../../context/AuthContext";
 import { BASE_API } from "../../../utils/api";
 
@@ -200,13 +205,10 @@ function ApplicationsList() {
                   <Skeleton variant="text" width="60%" height={32} />
                   <Skeleton variant="text" width="40%" height={24} />
                   <Skeleton variant="text" width="80%" height={20} />
-                  <Skeleton variant="rectangular" width="100%" height={60} />
-                  <Divider sx={{ my: 1 }} />
-                  <Skeleton variant="rectangular" width="100%" height={32} />
-                  <Skeleton variant="rectangular" width="100%" height={32} />
-                  <Skeleton variant="rectangular" width="100%" height={32} />
-                  <Box mt={2} display="flex" justifyContent="flex-end">
-                    <Skeleton variant="rectangular" width={100} height={36} />
+                  <Skeleton variant="text" width="60%" height={20} />
+                  <Box sx={{ display: "flex", gap: 1 }}>
+                    <Skeleton variant="rectangular" width={80} height={32} />
+                    <Skeleton variant="rectangular" width={80} height={32} />
                   </Box>
                 </Stack>
               </Paper>
@@ -215,36 +217,24 @@ function ApplicationsList() {
         </Grid>
       </Box>
     );
-  if (error) return <Alert severity="error">{error}</Alert>;
-  if (!applications.length)
-    return (
-      <Typography color="text.secondary" my={4}>
-        No applications found.
-      </Typography>
-    );
 
   return (
     <Box mb={4}>
-      <Typography variant="h5" fontWeight={700} mb={2} color="primary">
-        {applications?.length == 1
-          ? applications?.length + " Application"
-          : applications?.length + " Applications"}
-      </Typography>
       <Stack
         direction={{ xs: "column", sm: "row" }}
         spacing={2}
         mb={3}
         alignItems={{ sm: "center" }}
       >
-        <FormControl sx={{ minWidth: 180 }} size="small">
-          <InputLabel>Sort By</InputLabel>
+        <FormControl sx={{ minWidth: 120 }}>
+          <InputLabel>Sort by</InputLabel>
           <Select
             value={sortBy}
-            label="Sort By"
+            label="Sort by"
             onChange={(e) => setSortBy(e.target.value)}
           >
-            <MenuItem value="score">Highest Match Score</MenuItem>
-            <MenuItem value="name">Candidate Name</MenuItem>
+            <MenuItem value="score">Match Score</MenuItem>
+            <MenuItem value="name">Name</MenuItem>
           </Select>
         </FormControl>
         <Autocomplete
@@ -253,158 +243,73 @@ function ApplicationsList() {
           value={skillFilter}
           onChange={(_, newValue) => setSkillFilter(newValue)}
           renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Filter by Matched Skills"
-              size="small"
-            />
+            <TextField {...params} label="Filter by skills" />
           )}
-          sx={{ minWidth: 220, flex: 1 }}
+          sx={{ minWidth: 200 }}
         />
       </Stack>
+
       <Grid container spacing={3}>
         {filteredApps.map((app) => (
           <Grid item xs={12} sm={6} md={4} key={app.id}>
-            <Paper
-              elevation={2}
-              sx={{
-                p: 3,
-                borderRadius: 3,
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-              }}
-            >
-              <Stack direction="column" spacing={2}>
-                <Box>
-                  <Typography variant="h6" fontWeight={700}>
+            <Paper elevation={2} sx={{ p: 3, borderRadius: 3, height: "100%" }}>
+              <Stack spacing={2}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                  }}
+                >
+                  <Typography variant="h6" sx={{ fontWeight: 600 }}>
                     {app.candidate_name}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {app.candidate_email}
-                  </Typography>
-                  <Typography variant="subtitle2" color="primary" mt={1}>
-                    Job: {app.job_title}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" mt={1}>
-                    <b>Status:</b> {app.status} | <b>Applied:</b>{" "}
-                    {new Date(app.applied_at).toLocaleString()}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" mt={1}>
-                    <b>Match Score:</b> {app.match_score}%
-                  </Typography>
-                </Box>
-                <Box mt={1}>
-                  <Typography variant="subtitle2" fontWeight={600} mb={0.5}>
-                    Cover Letter:
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ whiteSpace: "pre-line" }}
-                  >
-                    {app.cover_letter}
-                  </Typography>
-                </Box>
-                <Divider sx={{ my: 1 }} />
-                <Stack direction="column" spacing={1}>
-                  <Box>
-                    <Typography variant="subtitle2" color="success.main">
-                      Matched Skills:
-                    </Typography>
-                    {app.matched_skills && app.matched_skills.length > 0 ? (
-                      app.matched_skills.map((ms, idx) => (
-                        <Chip
-                          key={idx}
-                          label={ms.cv_skill}
-                          color="success"
-                          size="small"
-                          sx={{ mr: 0.5, mb: 0.5 }}
-                        />
-                      ))
-                    ) : (
-                      <Typography variant="caption" color="text.secondary">
-                        None
-                      </Typography>
-                    )}
-                  </Box>
-                  <Box>
-                    <Typography variant="subtitle2" color="warning.main">
-                      Missing Skills:
-                    </Typography>
-                    {app.missing_skills && app.missing_skills.length > 0 ? (
-                      app.missing_skills.map((skill, idx) => (
-                        <Chip
-                          key={idx}
-                          label={skill}
-                          color="warning"
-                          size="small"
-                          sx={{ mr: 0.5, mb: 0.5 }}
-                        />
-                      ))
-                    ) : (
-                      <Typography variant="caption" color="text.secondary">
-                        None
-                      </Typography>
-                    )}
-                  </Box>
-                  <Box>
-                    <Typography variant="subtitle2" color="info.main">
-                      Extra Skills:
-                    </Typography>
-                    {app.extra_skills && app.extra_skills.length > 0 ? (
-                      app.extra_skills.map((skill, idx) => (
-                        <Chip
-                          key={idx}
-                          label={skill}
-                          color="info"
-                          size="small"
-                          sx={{ mr: 0.5, mb: 0.5 }}
-                        />
-                      ))
-                    ) : (
-                      <Typography variant="caption" color="text.secondary">
-                        None
-                      </Typography>
-                    )}
-                  </Box>
-                </Stack>
-                <Box
-                  mt={2}
-                  display="flex"
-                  justifyContent="space-between"
-                  alignItems="center"
-                >
                   <Chip
-                    label={`Status: ${app.status}`}
-                    color={
-                      app.status === "approved"
-                        ? "success"
-                        : app.status === "rejected"
-                        ? "error"
-                        : "warning"
-                    }
-                    variant="outlined"
-                  />
-
-                  <Button
-                    variant="outlined"
+                    label={`${app.match_score.toFixed(1)}%`}
+                    color="success"
                     size="small"
-                    onClick={() => handleOpenStatusDialog(app.id, app.status)}
-                  >
-                    Update Status
-                  </Button>
+                  />
                 </Box>
+                <Typography variant="body2" color="text.secondary">
+                  Applied for: {app.job_title}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {app.candidate_email}
+                </Typography>
+                <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+                  {app.matched_skills?.slice(0, 3).map((skill, idx) => (
+                    <Chip
+                      key={idx}
+                      label={skill.cv_skill}
+                      size="small"
+                      variant="outlined"
+                    />
+                  ))}
+                  {app.matched_skills?.length > 3 && (
+                    <Chip
+                      label={`+${app.matched_skills.length - 3}`}
+                      size="small"
+                      variant="outlined"
+                    />
+                  )}
+                </Box>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => handleOpenStatusDialog(app.id, app.status)}
+                >
+                  {app.status}
+                </Button>
               </Stack>
             </Paper>
           </Grid>
         ))}
       </Grid>
+
       <Dialog open={statusDialog.open} onClose={handleCloseStatusDialog}>
         <DialogTitle>Update Application Status</DialogTitle>
         <DialogContent>
-          <FormControl fullWidth sx={{ mt: 2 }}>
+          <FormControl fullWidth sx={{ mt: 1 }}>
             <InputLabel>Status</InputLabel>
             <Select
               value={statusDialog.newStatus}
@@ -453,22 +358,110 @@ export default function CompanyDashboard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [extractedSkills, setExtractedSkills] = useState([]);
+  const [extractingSkills, setExtractingSkills] = useState(false);
+  const [extractionError, setExtractionError] = useState("");
+  const [extractedSkillsData, setExtractedSkillsData] = useState({ standardized: [], raw: [] });
   const { token } = useAuth();
 
   const handleOpen = () => {
     setOpen(true);
     setError("");
     setSuccess("");
+    setExtractedSkills([]);
+    setExtractionError("");
+    setExtractedSkillsData({ standardized: [], raw: [] });
   };
   const handleClose = () => {
     setOpen(false);
     setJob(initialJob);
     setError("");
     setSuccess("");
+    setExtractedSkills([]);
+    setExtractionError("");
+    setExtractedSkillsData({ standardized: [], raw: [] });
   };
   const handleChange = (e) => {
     setJob({ ...job, [e.target.name]: e.target.value });
   };
+
+  const handleExtractSkills = async () => {
+    if (!job.description.trim()) {
+      setExtractionError("Please enter a job description first");
+      return;
+    }
+
+    setExtractingSkills(true);
+    setExtractionError("");
+    try {
+      const response = await fetch(`${BASE_API}/extract-job-skills`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          job_description: job.description,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to extract skills");
+      }
+
+      const data = await response.json();
+      setExtractedSkillsData(data);
+      
+      // Combine standardized and raw skills
+      const allSkills = [...(data.standardized || []), ...(data.raw || [])];
+      setExtractedSkills(allSkills);
+      
+      // Update requirements field with extracted skills
+      const skillsText = allSkills.map(skill => `• ${skill}`).join('\n');
+      setJob(prev => ({
+        ...prev,
+        requirements: prev.requirements ? `${prev.requirements}\n\nRequired Skills:\n${skillsText}` : `Required Skills:\n${skillsText}`
+      }));
+      
+    } catch (err) {
+      setExtractionError(err.message || "Failed to extract skills");
+    } finally {
+      setExtractingSkills(false);
+    }
+  };
+
+  const handleRemoveSkill = (skillToRemove) => {
+    setExtractedSkills(
+      extractedSkills.filter((skill) => skill !== skillToRemove)
+    );
+    
+    // Update requirements field by removing the skill
+    const updatedSkills = extractedSkills.filter(skill => skill !== skillToRemove);
+    const skillsText = updatedSkills.map(skill => `• ${skill}`).join('\n');
+    
+    // Remove the skills section from requirements and add updated skills
+    const requirementsWithoutSkills = job.requirements.replace(/\n\nRequired Skills:\n[\s\S]*$/, '');
+    setJob(prev => ({
+      ...prev,
+      requirements: requirementsWithoutSkills + (updatedSkills.length > 0 ? `\n\nRequired Skills:\n${skillsText}` : '')
+    }));
+  };
+
+  const handleAddSkill = (newSkill) => {
+    if (newSkill.trim() && !extractedSkills.includes(newSkill.trim())) {
+      const updatedSkills = [...extractedSkills, newSkill.trim()];
+      setExtractedSkills(updatedSkills);
+      
+      // Update requirements field
+      const skillsText = updatedSkills.map(skill => `• ${skill}`).join('\n');
+      const requirementsWithoutSkills = job.requirements.replace(/\n\nRequired Skills:\n[\s\S]*$/, '');
+      setJob(prev => ({
+        ...prev,
+        requirements: requirementsWithoutSkills + `\n\nRequired Skills:\n${skillsText}`
+      }));
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -485,11 +478,13 @@ export default function CompanyDashboard() {
           ...job,
           salary_min: Number(job.salary_min),
           salary_max: Number(job.salary_max),
+          skills: extractedSkills,
         }),
       });
       if (!res.ok) throw new Error("Failed to post job");
       setSuccess("Job posted successfully!");
       setJob(initialJob);
+      setExtractedSkills([]);
       setTimeout(() => setOpen(false), 1200);
     } catch (err) {
       setError(err.message || "Failed to post job");
@@ -517,7 +512,7 @@ export default function CompanyDashboard() {
       >
         <AddIcon />
       </Fab>
-      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
         <DialogTitle>Post a New Job</DialogTitle>
         <form onSubmit={handleSubmit}>
           <DialogContent>
@@ -530,16 +525,86 @@ export default function CompanyDashboard() {
                 required
                 fullWidth
               />
-              <TextField
-                label="Description"
-                name="description"
-                value={job.description}
-                onChange={handleChange}
-                required
-                fullWidth
-                multiline
-                minRows={2}
-              />
+
+              <Box>
+                <Box
+                  sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}
+                >
+                  <TextField
+                    label="Description"
+                    name="description"
+                    value={job.description}
+                    onChange={handleChange}
+                    required
+                    fullWidth
+                    multiline
+                    minRows={3}
+                  />
+                  <Tooltip title="Extract skills from description">
+                    <IconButton
+                      onClick={handleExtractSkills}
+                      disabled={extractingSkills || !job.description.trim()}
+                      color="primary"
+                      sx={{ alignSelf: "flex-start", mt: 1 }}
+                    >
+                      {extractingSkills ? (
+                        <CircularProgress size={20} />
+                      ) : (
+                        <AutoFixHighIcon />
+                      )}
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+                {extractionError && (
+                  <Alert severity="error" sx={{ mt: 1 }}>
+                    {extractionError}
+                  </Alert>
+                )}
+                {extractingSkills && (
+                  <Alert severity="info" sx={{ mt: 1 }}>
+                    Extracting skills from description...
+                  </Alert>
+                )}
+              </Box>
+
+              {/* Extracted Skills Section */}
+              {extractedSkills.length > 0 && (
+                <Box>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ mb: 1, fontWeight: 600 }}
+                  >
+                    Extracted Skills ({extractedSkills.length}):
+                  </Typography>
+                  <Box
+                    sx={{ display: "flex", gap: 1, flexWrap: "wrap", mb: 2 }}
+                  >
+                    {extractedSkills.map((skill, index) => (
+                      <Chip
+                        key={index}
+                        label={skill}
+                        onDelete={() => handleRemoveSkill(skill)}
+                        color="primary"
+                        variant="outlined"
+                        size="small"
+                      />
+                    ))}
+                  </Box>
+                  <TextField
+                    label="Add custom skill"
+                    size="small"
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleAddSkill(e.target.value);
+                        e.target.value = "";
+                      }
+                    }}
+                    sx={{ width: 200 }}
+                  />
+                </Box>
+              )}
+
               <TextField
                 label="Requirements"
                 name="requirements"
@@ -548,7 +613,8 @@ export default function CompanyDashboard() {
                 required
                 fullWidth
                 multiline
-                minRows={2}
+                minRows={4}
+                placeholder="Enter job requirements and responsibilities..."
               />
               <TextField
                 label="Location"

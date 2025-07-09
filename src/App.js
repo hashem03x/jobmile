@@ -12,12 +12,13 @@ import {
 import LoginSignup from "./components/pages/LoginSignup";
 import PrivateRoute from "./components/routes/PrivateRoute";
 import PublicRoute from "./components/routes/PublicRoute";
-import CandidateDashboard from "./components/pages/dashboard/CandidateDashboard";
-import CompanyDashboard from "./components/pages/dashboard/CompanyDashboard";
+import CandidateDashboard from "./components/pages/candidate/CandidateDashboard";
+import CompanyDashboard from "./components/pages/company/CompanyDashboard";
 import { useAuth } from "./components/context/AuthContext";
-import Profile from "./components/pages/Profile";
+import Profile from "./components/pages/candidate/Profile";
 import Jobs from "./components/ui/Jobs";
-import JobApplyPage from "./components/pages/JobApplyPage";
+import JobApplyPage from "./components/pages/candidate/JobApplyPage";
+import CompanyStats from "./components/pages/company/CompanyStats";
 
 function App() {
   const { isAuthenticated, user } = useAuth();
@@ -72,9 +73,9 @@ function App() {
             isAuthenticated ? (
               <Navigate
                 to={
-                  user?.type === "company"
-                    ? "/dashboard/company"
-                    : "/dashboard/candidate"
+                  user?.user_type === "company"
+                    ? "/company/home"
+                    : "/candidate/home"
                 }
                 replace
               />
@@ -87,13 +88,19 @@ function App() {
           <Route path="/login" element={<LoginSignup />} />
           <Route path="/signup" element={<LoginSignup />} />
         </Route>
+        {/* Candidate routes */}
         <Route element={<PrivateRoute />}>
-          <Route path="/dashboard/candidate" element={<CandidateDashboard />} />
-
-          <Route path="/dashboard/company" element={<CompanyDashboard />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/jobs" element={<Jobs />} />
-          <Route path="/job/:id/apply" element={<JobApplyPage />} />
+          <Route path="/candidate">
+            <Route path="home" element={<CandidateDashboard />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="jobs" element={<Jobs />} />
+            <Route path="job/:id/apply" element={<JobApplyPage />} />
+          </Route>
+          {/* Company routes */}
+          <Route path="/company">
+            <Route path="home" element={<CompanyDashboard />} />
+            <Route path="stats" element={<CompanyStats />} />
+          </Route>
         </Route>
         <Route
           path="*"

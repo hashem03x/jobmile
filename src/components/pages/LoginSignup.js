@@ -135,9 +135,9 @@ export default function LoginSignup() {
         );
         // Redirect based on user_type
         if (data.user_type === "candidate") {
-          navigate("/candidate");
+          navigate("/candidate/home");
         } else if (data.user_type === "company") {
-          navigate("/company");
+          navigate("/company/home");
         }
         return;
       }
@@ -151,9 +151,9 @@ export default function LoginSignup() {
           data.access_token
         );
         if (data.user_type === "candidate") {
-          navigate("/candidate");
+          navigate("/candidate/home");
         } else if (data.user_type === "company") {
-          navigate("/company");
+          navigate("/company/home");
         }
         return;
       }
@@ -745,9 +745,9 @@ export default function LoginSignup() {
                     );
                     // Redirect based on user_type
                     if (data.user_type === 'candidate') {
-                      navigate('/candidate');
+                      navigate('/candidate/home');
                     } else if (data.user_type === 'company') {
-                      navigate('/company');
+                      navigate('/company/home');
                     }
                   } catch (err) {
                     setError(

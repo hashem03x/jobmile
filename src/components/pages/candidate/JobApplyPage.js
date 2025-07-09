@@ -11,8 +11,8 @@ import {
   Stack,
   Divider,
 } from "@mui/material";
-import { BASE_API } from "../../utils/api";
-import { useAuth } from "../context/AuthContext";
+import { BASE_API } from "../../../utils/api";
+import { useAuth } from "../../context/AuthContext";
 
 export default function JobApplyPage() {
   const { id } = useParams();

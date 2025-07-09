@@ -7,8 +7,8 @@ export default function PublicRoute({ children, ...rest }) {
   if (loading) return null;
   if (isAuthenticated) {
     // Redirect to dashboard based on user type
-    if (user?.type === 'company') return <Navigate to="/dashboard/company" replace />;
-    return <Navigate to="/dashboard/candidate" replace />;
+    if (user?.user_type === 'company') return <Navigate to="/company/home" replace />;
+    return <Navigate to="/candidate/home" replace />;
   }
   return children ? children : <Outlet />;
 } 
