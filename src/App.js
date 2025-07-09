@@ -89,16 +89,12 @@ function App() {
         </Route>
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard/candidate" element={<CandidateDashboard />} />
-          <Route
-            path="/dashboard/candidate/jobs"
-            element={<CandidateDashboard />}
-          />
+
           <Route path="/dashboard/company" element={<CompanyDashboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/job/:id/apply" element={<JobApplyPage />} />
         </Route>
-        {/* Catch-all for 404s */}
         <Route
           path="*"
           element={

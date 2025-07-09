@@ -21,17 +21,29 @@ import { useAuth } from "../context/AuthContext";
 
 export default function AppMenu() {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
-  const { logout } = useAuth();
-  const menuLinks = [
-    { label: "Home", to: "/dashboard/candidate", icon: <HomeIcon /> },
-    { label: "Jobs", to: "/jobs", icon: <WorkIcon /> },
-    { label: "Profile", to: "/profile", icon: <PersonIcon /> },
-    {
-      label: "Logout",
-      icon: <LogoutIcon />,
-      click: () => logout(),
-    },
-  ];
+  const { logout, user } = useAuth();
+  const menuLinks =
+    user === "candidate"
+      ? [
+          { label: "Home", to: "/dashboard/candidate", icon: <HomeIcon /> },
+          { label: "Jobs", to: "/jobs", icon: <WorkIcon /> },
+          { label: "Profile", to: "/profile", icon: <PersonIcon /> },
+          {
+            label: "Logout",
+            icon: <LogoutIcon />,
+            click: () => logout(),
+          },
+        ]
+      : [
+          { label: "Home", to: "/dashboard/company", icon: <HomeIcon /> },
+          { label: "Jobs", to: "/jobs", icon: <WorkIcon /> },
+          { label: "Profile", to: "/profile", icon: <PersonIcon /> },
+          {
+            label: "Logout",
+            icon: <LogoutIcon />,
+            click: () => logout(),
+          },
+        ];
   const handleDrawerToggle = () => {
     setDrawerOpen((prev) => !prev);
   };
@@ -69,7 +81,7 @@ export default function AppMenu() {
                 component={NavLink}
                 to={item.to}
                 onClick={item.click}
-                  sx={{
+                sx={{
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",

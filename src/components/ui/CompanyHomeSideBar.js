@@ -1,7 +1,7 @@
 import React from "react";
 
 function CompanyHomeSideBar() {
-  return <div>CompanyHomeSideBar</div>;
+  return <div></div>;
 }
 
 export default CompanyHomeSideBar;

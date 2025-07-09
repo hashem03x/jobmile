@@ -15,9 +15,17 @@ export function AuthProvider({ children }) {
     // Load from localStorage
     const stored = localStorage.getItem("auth");
     if (stored) {
-      const { user, token } = JSON.parse(stored);
-      setUser(user);
-      setToken(token);
+      const { user, token, expiry } = JSON.parse(stored);
+      // Check expiry
+      if (expiry && Date.now() > expiry) {
+        // Token expired
+        localStorage.removeItem("auth");
+        setUser(null);
+        setToken(null);
+      } else {
+        setUser(user);
+        setToken(token);
+      }
     }
     setLoading(false);
   }, []);
@@ -25,12 +33,16 @@ export function AuthProvider({ children }) {
   const login = (user, token) => {
     setUser(user);
     setToken(token);
+    // Set expiry for 60 minutes from now
+    const expiry = Date.now() + 60 * 60 * 1000;
+    localStorage.setItem("auth", JSON.stringify({ user, token, expiry }));
   };
 
   const logout = () => {
     console.log("Logging out");
     setUser(null);
     setToken(null);
+    localStorage.removeItem("auth");
   };
   console.log(token);
   const value = {

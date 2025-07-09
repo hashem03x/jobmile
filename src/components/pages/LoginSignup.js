@@ -35,6 +35,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { BASE_API } from "../../utils/api";
+import { GoogleLogin } from "@react-oauth/google";
 
 const endpoints = {
   login: {
@@ -133,6 +134,22 @@ export default function LoginSignup() {
           data.access_token
         );
         // Redirect based on user_type
+        if (data.user_type === "candidate") {
+          navigate("/candidate");
+        } else if (data.user_type === "company") {
+          navigate("/company");
+        }
+        return;
+      }
+      // If registration, log in immediately with returned token and user info
+      if (mode === "register" && data.access_token && data.user_id && data.user_type) {
+        authLogin(
+          {
+            user_type: data.user_type,
+            user_id: data.user_id,
+          },
+          data.access_token
+        );
         if (data.user_type === "candidate") {
           navigate("/candidate");
         } else if (data.user_type === "company") {
@@ -694,6 +711,55 @@ export default function LoginSignup() {
                   }}
                 />
               )}
+            </Box>
+            {/* Google Login/Signup Button */}
+            <Box sx={{ mt: 2, mb: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
+                or {mode === 'login' ? 'login' : 'sign up'} with Google
+              </Typography>
+              <GoogleLogin
+                text={mode === 'login' ? 'signin_with' : 'signup_with'}
+                onSuccess={async (credentialResponse) => {
+                  try {
+                    // Send Google token and user_type to backend for authentication
+                    const res = await fetch(
+                      'https://employment-match-final-cicb6wgitq-lz.a.run.app/auth/google',
+                      {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          token: credentialResponse.credential,
+                          user_type: userType,
+                        }),
+                      }
+                    );
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.message || 'Google authentication failed');
+                    // Use backend response to log in
+                    authLogin(
+                      {
+                        user_type: data.user_type,
+                        user_id: data.user_id,
+                      },
+                      data.access_token
+                    );
+                    // Redirect based on user_type
+                    if (data.user_type === 'candidate') {
+                      navigate('/candidate');
+                    } else if (data.user_type === 'company') {
+                      navigate('/company');
+                    }
+                  } catch (err) {
+                    setError(
+                      (err.message || 'Google authentication failed. Please try again.')
+                    );
+                  }
+                }}
+                onError={() => setError('Google ' + (mode === 'login' ? 'login' : 'signup') + ' failed. Please try again.')}
+                width="100%"
+                theme="filled_blue"
+                size="large"
+              />
             </Box>
           </form>
         </Paper>

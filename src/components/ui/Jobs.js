@@ -230,16 +230,13 @@ function Jobs() {
           {/* Jobs Grid */}
           <Box
             sx={{
-              minHeight: 420,
-              bgcolor: "#fff",
-              borderRadius: 3,
-              p: 2,
-              boxShadow: 1,
+              backgroundColor: "white",
               display: "flex",
               flexDirection: "column",
-              justifyContent:
-                filteredJobs.length === 0 ? "center" : "flex-start",
-              alignItems: "center",
+              gap: 4,
+              p: 4,
+              borderRadius: 3,
+              boxShadow: { md: 2 },
             }}
           >
             {loading ? (
@@ -268,13 +265,9 @@ function Jobs() {
                 </Typography>
               </Box>
             ) : (
-              <Grid container spacing={2} alignItems="flex-start">
-                {filteredJobs.map((job) => (
-                  <Grid item xs={12} sm={6} md={4} lg={3} key={job.id}>
-                    <JobCard job={job} onShowDetails={handleShowDetails} />
-                  </Grid>
-                ))}
-              </Grid>
+              filteredJobs.map((job) => (
+                <JobCard job={job} onShowDetails={handleShowDetails} />
+              ))
             )}
           </Box>
         </Grid>
@@ -369,24 +362,26 @@ function Jobs() {
               <Stack direction="row" spacing={1} mb={2}>
                 <Chip
                   icon={<LocationOnIcon />}
-                  label={jobDetails.location}
+                  label={jobDetails.location || "NA"}
                   size="small"
                 />
                 <Chip
                   icon={<WorkIcon />}
-                  label={jobDetails.employment_type}
+                  label={jobDetails.employment_type || "NA"}
                   size="small"
                   color="secondary"
                 />
                 <Chip
                   icon={<AccessTimeIcon />}
-                  label={jobDetails.experience_level}
+                  label={jobDetails.experience_level || "NA"}
                   size="small"
                   color="info"
                 />
                 <Chip
                   icon={<MonetizationOnIcon />}
-                  label={`EGP ${jobDetails.salary_min} - ${jobDetails.salary_max}`}
+                  label={`EGP ${jobDetails.salary_min || "Not Specified"} - ${
+                    jobDetails.salary_max || "Not Specified"
+                  }`}
                   size="small"
                   color="success"
                 />
@@ -410,7 +405,7 @@ function Jobs() {
                   lineHeight: 1.7,
                 }}
               >
-                {jobDetails.description}
+                {jobDetails.description || "No description available."}
               </Typography>
               <Typography
                 variant="subtitle2"
@@ -426,7 +421,7 @@ function Jobs() {
                 mb={2}
                 sx={{ fontSize: 14 }}
               >
-                {jobDetails.requirements}
+                {jobDetails.requirements || "No specific requirements listed."}
               </Typography>
               <Box flexGrow={1} />
               <Divider sx={{ my: 2 }} />
