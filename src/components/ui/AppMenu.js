@@ -24,7 +24,7 @@ export default function AppMenu() {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const { logout, user } = useAuth();
   const menuLinks =
-    user === "candidate"
+    user?.user_type === "candidate"
       ? [
           { label: "Home", to: "/candidate/home", icon: <HomeIcon /> },
           { label: "Jobs", to: "/candidate/jobs", icon: <WorkIcon /> },
@@ -33,7 +33,6 @@ export default function AppMenu() {
             label: "Logout",
             to: "/login",
             icon: <LogoutIcon />,
-
             click: () => logout(),
           },
         ]
@@ -116,36 +115,63 @@ export default function AppMenu() {
         onClose={handleDrawerToggle}
         sx={{
           display: { xs: "block", md: "none" },
-          "& .MuiDrawer-paper": { width: 240 },
+          "& .MuiDrawer-paper": {
+            width: 260,
+            height: "auto", 
+            maxHeight: "80vh", 
+            bgcolor: "#fff",
+            boxShadow: 3,
+            borderRadius: 2,
+            overflowY: "auto",
+            position: "fixed",
+            top: "30%",
+            transform: "translateY(-50%)",
+          },
         }}
       >
         <Box
-          sx={{ width: 240 }}
+          sx={{ width: 260 }}
           role="presentation"
           onClick={handleDrawerToggle}
           onKeyDown={handleDrawerToggle}
         >
-          <List>
+          <Divider />
+          <List sx={{ mt: 1 }}>
             {menuLinks.map((item) => (
               <ListItem
-                button
                 key={item.label}
                 component={NavLink}
                 to={item.to}
-                onClick={item.click}
+                onClick={item.onClick}
                 sx={{
+                  py: 1.5,
+                  px: 3,
+                  borderRadius: 2,
+                  color: "black",
+                  transition: "background-color 0.2s",
+                  "&:hover": {
+                    backgroundColor: "#f9f9f9",
+                  },
                   "&.active": {
                     backgroundColor: "#f4f2ee",
-                    color: "#1976d2",
+                    color: "primary.main",
+                    fontWeight: "bold",
                   },
                 }}
               >
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.label} />
+                <ListItemIcon sx={{ minWidth: 36, color: "black"}}>
+                  {item.icon}
+                </ListItemIcon>
+                <ListItemText
+                  primary={item.label}
+                  primaryTypographyProps={{
+                    fontSize: "0.95rem",
+                    fontWeight: 500,
+                  }}
+                />
               </ListItem>
             ))}
           </List>
-          <Divider />
         </Box>
       </Drawer>
     </Box>

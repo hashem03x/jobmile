@@ -108,9 +108,8 @@ function Jobs() {
       job.title.toLowerCase().includes(search.toLowerCase()) ||
       (job.position &&
         job.position.toLowerCase().includes(search.toLowerCase()));
-    const matchesEmployment = employmentType.toLocaleLowerCase()
-      ? job.employment_type.toLocaleLowerCase() ===
-        employmentType.toLocaleLowerCase()
+    const matchesEmployment = employmentType
+      ? job.employment_type.toLowerCase() === employmentType.toLowerCase()
       : true;
     const matchesExperience = experienceLevel
       ? job.experience_level.toLowerCase() === experienceLevel
