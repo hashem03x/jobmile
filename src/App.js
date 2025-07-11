@@ -19,6 +19,7 @@ import Profile from "./components/pages/candidate/Profile";
 import Jobs from "./components/ui/Jobs";
 import JobApplyPage from "./components/pages/candidate/JobApplyPage";
 import CompanyStats from "./components/pages/company/CompanyStats";
+import CompanyLayout from "./components/ui/CompanyLayout";
 
 function App() {
   const { isAuthenticated, user } = useAuth();
@@ -98,8 +99,16 @@ function App() {
           </Route>
           {/* Company routes */}
           <Route path="/company">
-            <Route path="home" element={<CompanyDashboard />} />
-            <Route path="stats" element={<CompanyStats />} />
+            <Route path="home" element={
+              <CompanyLayout>
+                <CompanyDashboard />
+              </CompanyLayout>
+            } />
+            <Route path="stats" element={
+              <CompanyLayout>
+                <CompanyStats />
+              </CompanyLayout>
+            } />
           </Route>
         </Route>
         <Route

@@ -43,7 +43,7 @@ const initialJob = {
   experience_level: "",
 };
 
-function ApplicationsList() {
+function ApplicationsList({ onAddJob }) {
   const { token } = useAuth();
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -247,6 +247,35 @@ function ApplicationsList() {
           )}
           sx={{ minWidth: 200 }}
         />
+        <Button 
+          variant="contained"
+          color="primary" 
+          aria-label="add" 
+          onClick={onAddJob}
+          startIcon={<AddIcon />}
+          sx={{
+            px: 3,
+            py: 1.5,
+            borderRadius: 2,
+            fontWeight: 600,
+            fontSize: '0.95rem',
+            textTransform: 'none',
+            boxShadow: '0 4px 12px rgba(25, 118, 210, 0.3)',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            '&:hover': {
+              background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
+              boxShadow: '0 6px 20px rgba(25, 118, 210, 0.4)',
+              transform: 'translateY(-1px)'
+            },
+            '&:active': {
+              transform: 'translateY(0)',
+              boxShadow: '0 2px 8px rgba(25, 118, 210, 0.3)'
+            },
+            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
+          }}
+        >
+          Post New Job
+        </Button>
       </Stack>
 
       <Grid container spacing={3}>
@@ -361,7 +390,10 @@ export default function CompanyDashboard() {
   const [extractedSkills, setExtractedSkills] = useState([]);
   const [extractingSkills, setExtractingSkills] = useState(false);
   const [extractionError, setExtractionError] = useState("");
-  const [extractedSkillsData, setExtractedSkillsData] = useState({ standardized: [], raw: [] });
+  const [extractedSkillsData, setExtractedSkillsData] = useState({
+    standardized: [],
+    raw: [],
+  });
   const { token } = useAuth();
 
   const handleOpen = () => {
@@ -411,18 +443,19 @@ export default function CompanyDashboard() {
 
       const data = await response.json();
       setExtractedSkillsData(data);
-      
+
       // Combine standardized and raw skills
       const allSkills = [...(data.standardized || []), ...(data.raw || [])];
       setExtractedSkills(allSkills);
-      
+
       // Update requirements field with extracted skills
-      const skillsText = allSkills.map(skill => `• ${skill}`).join('\n');
-      setJob(prev => ({
+      const skillsText = allSkills.map((skill) => `• ${skill}`).join("\n");
+      setJob((prev) => ({
         ...prev,
-        requirements: prev.requirements ? `${prev.requirements}\n\nRequired Skills:\n${skillsText}` : `Required Skills:\n${skillsText}`
+        requirements: prev.requirements
+          ? `${prev.requirements}\n\nRequired Skills:\n${skillsText}`
+          : `Required Skills:\n${skillsText}`,
       }));
-      
     } catch (err) {
       setExtractionError(err.message || "Failed to extract skills");
     } finally {
@@ -434,16 +467,23 @@ export default function CompanyDashboard() {
     setExtractedSkills(
       extractedSkills.filter((skill) => skill !== skillToRemove)
     );
-    
+
     // Update requirements field by removing the skill
-    const updatedSkills = extractedSkills.filter(skill => skill !== skillToRemove);
-    const skillsText = updatedSkills.map(skill => `• ${skill}`).join('\n');
-    
+    const updatedSkills = extractedSkills.filter(
+      (skill) => skill !== skillToRemove
+    );
+    const skillsText = updatedSkills.map((skill) => `• ${skill}`).join("\n");
+
     // Remove the skills section from requirements and add updated skills
-    const requirementsWithoutSkills = job.requirements.replace(/\n\nRequired Skills:\n[\s\S]*$/, '');
-    setJob(prev => ({
+    const requirementsWithoutSkills = job.requirements.replace(
+      /\n\nRequired Skills:\n[\s\S]*$/,
+      ""
+    );
+    setJob((prev) => ({
       ...prev,
-      requirements: requirementsWithoutSkills + (updatedSkills.length > 0 ? `\n\nRequired Skills:\n${skillsText}` : '')
+      requirements:
+        requirementsWithoutSkills +
+        (updatedSkills.length > 0 ? `\n\nRequired Skills:\n${skillsText}` : ""),
     }));
   };
 
@@ -451,13 +491,17 @@ export default function CompanyDashboard() {
     if (newSkill.trim() && !extractedSkills.includes(newSkill.trim())) {
       const updatedSkills = [...extractedSkills, newSkill.trim()];
       setExtractedSkills(updatedSkills);
-      
+
       // Update requirements field
-      const skillsText = updatedSkills.map(skill => `• ${skill}`).join('\n');
-      const requirementsWithoutSkills = job.requirements.replace(/\n\nRequired Skills:\n[\s\S]*$/, '');
-      setJob(prev => ({
+      const skillsText = updatedSkills.map((skill) => `• ${skill}`).join("\n");
+      const requirementsWithoutSkills = job.requirements.replace(
+        /\n\nRequired Skills:\n[\s\S]*$/,
+        ""
+      );
+      setJob((prev) => ({
         ...prev,
-        requirements: requirementsWithoutSkills + `\n\nRequired Skills:\n${skillsText}`
+        requirements:
+          requirementsWithoutSkills + `\n\nRequired Skills:\n${skillsText}`,
       }));
     }
   };
@@ -496,22 +540,9 @@ export default function CompanyDashboard() {
   return (
     <AppContainer user="company">
       <Box mb={4}>
-        <ApplicationsList />
+        <ApplicationsList onAddJob={handleOpen} />
       </Box>
-      <Fab
-        color="primary"
-        aria-label="add"
-        onClick={handleOpen}
-        sx={{
-          position: "fixed",
-          bottom: 32,
-          right: 32,
-          zIndex: 1200,
-          fontWeight: 700,
-        }}
-      >
-        <AddIcon />
-      </Fab>
+
       <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
         <DialogTitle>Post a New Job</DialogTitle>
         <form onSubmit={handleSubmit}>

@@ -1,8 +1,6 @@
-import React from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import CandidateHomeSideBar from "./CandidateHomeSideBar";
-import CompanyHomeSideBar from "./CompanyHomeSideBar";
 import { Container } from "react-bootstrap";
 
 function AppContainer({ user, children }) {
@@ -11,7 +9,6 @@ function AppContainer({ user, children }) {
     <Box sx={{ flexGrow: 1, pt: 8, pb: 4, px: { xs: 1, sm: 2, md: 4 } }}>
       <Container fluid>
         {user === "candidate" && <CandidateHomeSideBar />}
-        {user === "company" && <CompanyHomeSideBar />}
       </Container>
       <Grid container>
         <Grid item>

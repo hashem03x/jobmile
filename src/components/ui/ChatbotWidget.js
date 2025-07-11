@@ -15,25 +15,27 @@ import {
 import {
   Send as SendIcon,
   Close as CloseIcon,
-  Chat as ChatIcon,
   SmartToy as BotIcon,
   Person as PersonIcon,
   ExpandMore as ExpandMoreIcon,
   ExpandLess as ExpandLessIcon
 } from '@mui/icons-material';
+import { BASE_API } from '../../utils/api';
+import { useAuth } from '../context/AuthContext';
 
 const ChatbotWidget = ({ isOpen, onToggle }) => {
+  const { token } = useAuth();
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: "Hello! I'm your AI career assistant. I can help you find jobs, analyze your skills, and provide career advice. How can I assist you today?",
+      text: "Hello! I'm your AI hiring assistant. I can help you find the best candidates, optimize job postings, and provide hiring insights. How can I assist you today?",
       sender: 'bot',
       timestamp: new Date(),
       suggestions: [
-        "Find jobs matching my skills",
-        "Analyze my skills gap",
-        "Career advice",
-        "Resume tips"
+        "Find top candidates",
+        "Optimize job posting",
+        "Hiring insights",
+        "Interview tips"
       ]
     }
   ]);
@@ -73,88 +75,63 @@ const ChatbotWidget = ({ isOpen, onToggle }) => {
     setInputValue('');
     setIsTyping(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const botResponse = generateBotResponse(text);
+    try {
+      const response = await fetch(`${BASE_API}/chat/message`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          message: text.trim()
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get response from chatbot');
+      }
+
+      const data = await response.json();
+      
+      const botResponse = {
+        id: Date.now(),
+        text: data.response || data.message || "I'm sorry, I couldn't process your request. Please try again.",
+        sender: 'bot',
+        timestamp: new Date(),
+        suggestions: data.suggestions || [
+          "Find top candidates",
+          "Optimize job posting",
+          "Hiring insights",
+          "Interview tips"
+        ]
+      };
+
       setMessages(prev => [...prev, botResponse]);
+    } catch (error) {
+      console.error('Chatbot API error:', error);
+      const errorResponse = {
+        id: Date.now(),
+        text: "I'm sorry, I'm having trouble connecting right now. Please try again later.",
+        sender: 'bot',
+        timestamp: new Date(),
+        suggestions: [
+          "Try again",
+          "Find top candidates",
+          "Optimize job posting",
+          "Hiring insights"
+        ]
+      };
+      setMessages(prev => [...prev, errorResponse]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   const handleSuggestionClick = (suggestion) => {
     handleSendMessage(suggestion);
   };
 
-  const generateBotResponse = (userInput) => {
-    const input = userInput.toLowerCase();
-    
-    if (input.includes('job') || input.includes('position') || input.includes('career')) {
-      return {
-        id: Date.now(),
-        text: "I found several great opportunities that match your profile! Based on your skills in React, Node.js, and Python, I recommend checking out the Senior Software Engineer position at TechCorp Inc. It has a 95% match score and offers excellent benefits. Would you like me to show you more details?",
-        sender: 'bot',
-        timestamp: new Date(),
-        suggestions: [
-          "Show me the job details",
-          "Find more similar jobs",
-          "Help me apply",
-          "Analyze my fit for this role"
-        ]
-      };
-    } else if (input.includes('skill') || input.includes('gap') || input.includes('develop')) {
-      return {
-        id: Date.now(),
-        text: "Based on your profile analysis, I've identified 3 key skills that could boost your career: AWS Cloud Services, Docker containerization, and GraphQL. These skills are in high demand and could increase your market value by 25%. Would you like a personalized learning path?",
-        sender: 'bot',
-        timestamp: new Date(),
-        suggestions: [
-          "Show me the learning path",
-          "Find courses for these skills",
-          "How long will it take?",
-          "What's the ROI?"
-        ]
-      };
-    } else if (input.includes('resume') || input.includes('cv')) {
-      return {
-        id: Date.now(),
-        text: "Great question! Here are some tips to make your resume stand out: 1) Use action verbs and quantifiable achievements, 2) Tailor it to each job description, 3) Include relevant keywords, 4) Keep it concise (1-2 pages). Would you like me to review your current resume?",
-        sender: 'bot',
-        timestamp: new Date(),
-        suggestions: [
-          "Review my resume",
-          "Resume templates",
-          "ATS optimization tips",
-          "Cover letter help"
-        ]
-      };
-    } else if (input.includes('advice') || input.includes('career')) {
-      return {
-        id: Date.now(),
-        text: "Here's some career advice based on your profile: 1) Focus on building a strong personal brand on LinkedIn, 2) Network actively in your field, 3) Consider certifications in emerging technologies, 4) Stay updated with industry trends. What specific area would you like to focus on?",
-        sender: 'bot',
-        timestamp: new Date(),
-        suggestions: [
-          "Networking strategies",
-          "Personal branding tips",
-          "Industry trends",
-          "Salary negotiation"
-        ]
-      };
-    } else {
-      return {
-        id: Date.now(),
-        text: "I understand you're asking about that. Let me help you with some options. You can ask me about job matching, skills analysis, career advice, resume tips, or salary information. What would you like to know more about?",
-        sender: 'bot',
-        timestamp: new Date(),
-        suggestions: [
-          "Find jobs matching my skills",
-          "Analyze my skills gap",
-          "Career advice",
-          "Resume tips"
-        ]
-      };
-    }
-  };
+
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter' && !event.shiftKey) {
@@ -177,20 +154,21 @@ const ChatbotWidget = ({ isOpen, onToggle }) => {
           <IconButton
             onClick={onToggle}
             sx={{
-              width: { xs: 56, sm: 64, md: 72 },
-              height: { xs: 56, sm: 64, md: 72 },
-              bgcolor: 'primary.main',
+              width: { xs: 56, sm: 64, md: 64 },
+              height: { xs: 56, sm: 64, md: 64 },
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
               color: 'white',
-              boxShadow: '0 8px 25px rgba(25, 118, 210, 0.3)',
+              boxShadow: '0 8px 25px rgba(102, 126, 234, 0.4)',
               '&:hover': {
-                bgcolor: 'primary.dark',
+                background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
                 transform: 'scale(1.1) rotate(5deg)',
-                boxShadow: '0 12px 35px rgba(25, 118, 210, 0.4)'
+                boxShadow: '0 12px 35px rgba(102, 126, 234, 0.5)'
               },
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              animation: 'pulse 2s infinite'
             }}
           >
-            <ChatIcon sx={{ fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' } }} />
+            <BotIcon sx={{ fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' } }} />
           </IconButton>
         </Tooltip>
       </Box>
@@ -207,7 +185,30 @@ const ChatbotWidget = ({ isOpen, onToggle }) => {
         width: { xs: 'calc(100vw - 32px)', sm: 400, md: 450 },
         maxWidth: { xs: '100%', sm: 400, md: 450 },
         height: { xs: 'calc(100vh - 32px)', sm: isExpanded ? 600 : 500, md: isExpanded ? 650 : 550 },
-        maxHeight: { xs: '100%', sm: isExpanded ? 600 : 500, md: isExpanded ? 650 : 550 }
+        maxHeight: { xs: '100%', sm: isExpanded ? 600 : 500, md: isExpanded ? 650 : 550 },
+        transition: 'height 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        animation: 'slideInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+        '@keyframes slideInUp': {
+          '0%': {
+            opacity: 0,
+            transform: 'translateY(20px) scale(0.9)',
+          },
+          '100%': {
+            opacity: 1,
+            transform: 'translateY(0) scale(1)',
+          },
+        },
+        '@keyframes pulse': {
+          '0%': {
+            boxShadow: '0 8px 25px rgba(102, 126, 234, 0.4)',
+          },
+          '50%': {
+            boxShadow: '0 8px 25px rgba(102, 126, 234, 0.6)',
+          },
+          '100%': {
+            boxShadow: '0 8px 25px rgba(102, 126, 234, 0.4)',
+          },
+        }
       }}
     >
       <Paper
@@ -219,7 +220,18 @@ const ChatbotWidget = ({ isOpen, onToggle }) => {
           borderRadius: { xs: 2, sm: 3 },
           overflow: 'hidden',
           background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
-          border: '1px solid rgba(0,0,0,0.1)'
+          border: '1px solid rgba(0,0,0,0.1)',
+          animation: 'fadeIn 0.5s ease-out',
+          '@keyframes fadeIn': {
+            '0%': {
+              opacity: 0,
+              transform: 'scale(0.95)',
+            },
+            '100%': {
+              opacity: 1,
+              transform: 'scale(1)',
+            },
+          }
         }}
       >
         {/* Header */}
@@ -252,7 +264,7 @@ const ChatbotWidget = ({ isOpen, onToggle }) => {
                   lineHeight: 1.2
                 }}
               >
-                AI Career Assistant
+                AI Hiring Assistant
               </Typography>
               <Typography
                 variant="caption"
@@ -309,13 +321,24 @@ const ChatbotWidget = ({ isOpen, onToggle }) => {
           }}
           className="chat-scrollbar"
         >
-          {messages.map((message) => (
+          {messages.map((message, index) => (
             <Box
               key={message.id}
               sx={{
                 display: 'flex',
                 justifyContent: message.sender === 'user' ? 'flex-end' : 'flex-start',
-                mb: 2
+                mb: 2,
+                animation: `messageSlideIn 0.3s ease-out ${index * 0.1}s both`,
+                '@keyframes messageSlideIn': {
+                  '0%': {
+                    opacity: 0,
+                    transform: message.sender === 'user' ? 'translateX(20px)' : 'translateX(-20px)',
+                  },
+                  '100%': {
+                    opacity: 1,
+                    transform: 'translateX(0)',
+                  },
+                }
               }}
             >
               <Box
