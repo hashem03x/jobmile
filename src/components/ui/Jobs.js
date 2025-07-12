@@ -98,7 +98,7 @@ function Jobs() {
   };
   const navigate = useNavigate();
   const handleApply = async (jobId) => {
-    navigate(`/job/${jobId}/apply`);
+    navigate(`/candidate/job/${jobId}/apply`);
   };
 
   // Filtering logic
