@@ -69,7 +69,14 @@ const initialCompany = {
 };
 
 const inputSx = (theme) => ({
-  marginBottom: "20px",
+  marginBottom: { xs: "16px", sm: "20px" },
+  "& .MuiInputBase-root": {
+    fontSize: { xs: "0.875rem", sm: "1rem" },
+    minHeight: { xs: 44, sm: 48 }
+  },
+  "& .MuiInputAdornment-root": {
+    fontSize: { xs: "1.1rem", sm: "1.25rem" }
+  }
 });
 
 export default function LoginSignup() {
@@ -172,7 +179,7 @@ export default function LoginSignup() {
       return (
         <>
           {mode === "register" && (
-            <Grid container spacing={4} justifyContent="space-between">
+            <Grid container spacing={{ xs: 2, sm: 4 }} justifyContent="space-between">
               <Grid item xs={12} sm={6}>
                 <Input
                   placeholder="First Name"
@@ -327,7 +334,7 @@ export default function LoginSignup() {
       return (
         <>
           {mode === "register" && (
-            <Grid container spacing={4} justifyContent="space-between">
+            <Grid container spacing={{ xs: 2, sm: 4 }} justifyContent="space-between">
               <Grid item xs={12} sm={6}>
                 <Input
                   placeholder="Company Name"
@@ -463,7 +470,7 @@ export default function LoginSignup() {
         position: "relative",
         overflow: "hidden",
         minHeight: "100vh",
-        p: 3,
+        p: { xs: 1, sm: 2, md: 3 },
       }}
     >
       {/* Abstract shapes background */}
@@ -514,11 +521,11 @@ export default function LoginSignup() {
         <Paper
           elevation={12}
           sx={{
-            p: { xs: 3, sm: 5 },
-            minWidth: 450,
-            maxWidth: 550,
+            p: { xs: 2, sm: 3, md: 5 },
+            minWidth: { xs: "100%", sm: 450 },
+            maxWidth: { xs: "100%", sm: 550 },
             width: "100%",
-            borderRadius: 6,
+            borderRadius: { xs: 3, sm: 6 },
             boxShadow: "0 8px 32px rgba(25,118,210,0.10)",
             background: `linear-gradient(120deg, ${theme.palette.background.paper} 80%, #f7faff 100%)`,
             border: `1.5px solid ${theme.palette.primary.light}22`,
@@ -529,16 +536,21 @@ export default function LoginSignup() {
             alignItems: "center",
             transition: "box-shadow 0.2s",
             "&:hover": {
-              boxShadow: "0 12px 40px rgba(25,118,210,0.18)",
+              boxShadow: { xs: "0 8px 32px rgba(25,118,210,0.10)", sm: "0 12px 40px rgba(25,118,210,0.18)" },
             },
           }}
         >
           {/* Logo/Brand */}
-          <Box sx={{ mb: 2.5, display: "flex", alignItems: "center", gap: 1 }}>
+          <Box sx={{ 
+            mb: { xs: 2, sm: 2.5 }, 
+            display: "flex", 
+            alignItems: "center", 
+            gap: { xs: 0.5, sm: 1 } 
+          }}>
             <Box
               sx={{
-                width: 44,
-                height: 44,
+                width: { xs: 36, sm: 44 },
+                height: { xs: 36, sm: 44 },
                 borderRadius: "50%",
                 background: theme.palette.primary.main,
                 display: "flex",
@@ -548,14 +560,21 @@ export default function LoginSignup() {
                 border: `2.5px solid ${theme.palette.secondary.main}`,
               }}
             >
-              <LoginIcon sx={{ color: "#fff", fontSize: 30 }} />
+              <LoginIcon sx={{ 
+                color: "#fff", 
+                fontSize: { xs: 24, sm: 30 } 
+              }} />
             </Box>
             <Typography
               variant="h4"
               fontWeight={900}
               color={theme.palette.primary.main}
               letterSpacing={1.5}
-              sx={{ ml: 1, fontFamily: "Montserrat, sans-serif" }}
+              sx={{ 
+                ml: { xs: 0.5, sm: 1 }, 
+                fontFamily: "Montserrat, sans-serif",
+                fontSize: { xs: "1.5rem", sm: "2.125rem" }
+              }}
             >
               Jobmile
             </Typography>
@@ -565,13 +584,21 @@ export default function LoginSignup() {
             value={mode}
             onChange={(_, v) => setMode(v)}
             variant="fullWidth"
-            sx={{ mb: 2, minWidth: "100%" }}
+            sx={{ 
+              mb: { xs: 1.5, sm: 2 }, 
+              minWidth: "100%",
+              "& .MuiTab-root": {
+                fontSize: { xs: "0.8rem", sm: "0.875rem" },
+                minHeight: { xs: 40, sm: 48 },
+                padding: { xs: "6px 8px", sm: "12px 16px" }
+              }
+            }}
             TabIndicatorProps={{
               style: { background: theme.palette.primary.main },
             }}
           >
             <Tab
-              icon={<LoginIcon sx={{ fontSize: 20 }} />}
+              icon={<LoginIcon sx={{ fontSize: { xs: 16, sm: 20 } }} />}
               label="Login"
               value="login"
               sx={{
@@ -585,7 +612,7 @@ export default function LoginSignup() {
               }}
             />
             <Tab
-              icon={<RegisterIcon sx={{ fontSize: 20 }} />}
+              icon={<RegisterIcon sx={{ fontSize: { xs: 16, sm: 20 } }} />}
               label="Sign Up"
               value="register"
               sx={{
@@ -603,7 +630,15 @@ export default function LoginSignup() {
             value={userType}
             onChange={(_, v) => setUserType(v)}
             variant="fullWidth"
-            sx={{ mb: 2, minWidth: "100%" }}
+            sx={{ 
+              mb: { xs: 1.5, sm: 2 }, 
+              minWidth: "100%",
+              "& .MuiTab-root": {
+                fontSize: { xs: "0.8rem", sm: "0.875rem" },
+                minHeight: { xs: 40, sm: 48 },
+                padding: { xs: "6px 8px", sm: "12px 16px" }
+              }
+            }}
             TabIndicatorProps={{
               style: { background: theme.palette.secondary.main },
             }}
@@ -639,10 +674,11 @@ export default function LoginSignup() {
             variant="h6"
             align="center"
             sx={{
-              mb: 2,
+              mb: { xs: 1.5, sm: 2 },
               fontWeight: 700,
               color: theme.palette.text.primary,
               letterSpacing: 0.5,
+              fontSize: { xs: "1rem", sm: "1.25rem" }
             }}
           >
             {mode === "login" ? "Welcome Back!" : "Create Your Account"}
@@ -665,7 +701,7 @@ export default function LoginSignup() {
                 {success}
               </Alert>
             )}
-            <Box sx={{ mt: 3, position: "relative" }}>
+            <Box sx={{ mt: { xs: 2, sm: 3 }, position: "relative" }}>
               <Button
                 type="submit"
                 variant="contained"
@@ -680,15 +716,16 @@ export default function LoginSignup() {
                   color: "#fff",
                   textTransform: "none",
                   letterSpacing: 1,
-                  fontSize: "1.1rem",
+                  fontSize: { xs: "1rem", sm: "1.1rem" },
+                  minHeight: { xs: 48, sm: 56 },
                   transition: "background 0.2s, transform 0.1s",
                   "&:hover": {
                     background: `linear-gradient(90deg, ${theme.palette.secondary.main} 0%, ${theme.palette.primary.main} 100%)`,
-                    transform: "scale(1.04)",
+                    transform: { xs: "none", sm: "scale(1.04)" },
                   },
                   "&:active": {
                     background: theme.palette.primary.main,
-                    transform: "scale(0.98)",
+                    transform: { xs: "scale(0.98)", sm: "scale(0.98)" },
                   },
                   "&:focus": {
                     outline: `2.5px solid ${theme.palette.success.main}`,
@@ -713,8 +750,21 @@ export default function LoginSignup() {
               )}
             </Box>
             {/* Google Login/Signup Button */}
-            <Box sx={{ mt: 2, mb: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
+            <Box sx={{ 
+              mt: { xs: 1.5, sm: 2 }, 
+              mb: 1, 
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center' 
+            }}>
+              <Typography 
+                variant="body2" 
+                color="textSecondary" 
+                sx={{ 
+                  mb: 1,
+                  fontSize: { xs: "0.75rem", sm: "0.875rem" }
+                }}
+              >
                 or {mode === 'login' ? 'login' : 'sign up'} with Google
               </Typography>
               <GoogleLogin
@@ -759,6 +809,10 @@ export default function LoginSignup() {
                 width="100%"
                 theme="filled_blue"
                 size="large"
+                style={{ 
+                  width: '100%',
+                  maxWidth: '100%'
+                }}
               />
             </Box>
           </form>
