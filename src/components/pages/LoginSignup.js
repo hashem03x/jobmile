@@ -557,7 +557,7 @@ export default function LoginSignup() {
               letterSpacing={1.5}
               sx={{ ml: 1, fontFamily: "Montserrat, sans-serif" }}
             >
-              Jobsy
+              Jobmile
             </Typography>
           </Box>
           {/* Tabs */}

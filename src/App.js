@@ -47,7 +47,7 @@ function App() {
       >
         <Box textAlign="center" color="white">
           <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>
-            Employment Matcher
+            Jobmile
           </Typography>
           <LinearProgress
             sx={{

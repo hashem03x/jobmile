@@ -74,7 +74,7 @@ export default function AppMenu() {
             component="div"
             sx={{ flexGrow: 1, display: { sm: "block" } }}
           >
-            Jobsy
+            Jobmile
           </Typography>
           {/* Desktop menu items */}
           <Box sx={{ display: { xs: "none", md: "flex" }, ml: 3, gap: 1 }}>
