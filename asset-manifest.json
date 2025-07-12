@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/jobmile/static/css/main.e0a1edae.css",
-    "main.js": "/jobmile/static/js/main.119c91aa.js",
+    "main.js": "/jobmile/static/js/main.72ca8dc3.js",
     "index.html": "/jobmile/index.html",
     "main.e0a1edae.css.map": "/jobmile/static/css/main.e0a1edae.css.map",
-    "main.119c91aa.js.map": "/jobmile/static/js/main.119c91aa.js.map"
+    "main.72ca8dc3.js.map": "/jobmile/static/js/main.72ca8dc3.js.map"
   },
   "entrypoints": [
     "static/css/main.e0a1edae.css",
-    "static/js/main.119c91aa.js"
+    "static/js/main.72ca8dc3.js"
   ]
 }
