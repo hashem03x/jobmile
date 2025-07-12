@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -10,59 +10,82 @@ import {
   Skeleton,
   Alert,
   Divider,
+  Card,
+  CardContent,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
   TextField,
   Stack,
   CircularProgress,
 } from "@mui/material";
 import {
+  Business,
   Email,
-  Phone,
+  Language,
   LocationOn,
   Work,
-  Business,
-  CalendarToday,
   Edit,
   Save,
   Cancel,
+  CalendarToday,
   Verified,
   TrendingUp,
+  People,
   Description,
-  CloudUpload,
-  Download,
 } from "@mui/icons-material";
-import { useUser } from '../../context/UserContext';
-import { useAuth } from '../../context/AuthContext';
-import { BASE_API } from '../../../utils/api';
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from "../../context/AuthContext";
+import { BASE_API } from "../../../utils/api";
 
-function Profile() {
-  const { userProfile: profile, userLoading: loading } = useUser();
+function CompanyProfile() {
   const { token } = useAuth();
-  const navigate = useNavigate();
+  const [companyData, setCompanyData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [editMode, setEditMode] = useState(false);
   const [editData, setEditData] = useState({});
   const [saveLoading, setSaveLoading] = useState(false);
   const [saveError, setSaveError] = useState("");
-  const [uploading, setUploading] = useState(false);
-  const [uploadError, setUploadError] = useState("");
-  const [uploadSuccess, setUploadSuccess] = useState("");
-  const fileInputRef = useRef();
 
   useEffect(() => {
-    if (profile) {
-      setEditData(profile);
+    fetchCompanyProfile();
+  }, [token]);
+
+  const fetchCompanyProfile = async () => {
+    try {
+      setLoading(true);
+      setError("");
+      const response = await fetch(`${BASE_API}/profile/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch company profile");
+      }
+
+      const data = await response.json();
+      setCompanyData(data);
+      setEditData(data);
+    } catch (err) {
+      setError(err.message || "Failed to load company profile");
+    } finally {
+      setLoading(false);
     }
-  }, [profile]);
+  };
 
   const handleEdit = () => {
     setEditMode(true);
-    setEditData({ ...profile });
+    setEditData({ ...companyData });
     setSaveError("");
   };
 
   const handleCancel = () => {
     setEditMode(false);
-    setEditData({ ...profile });
+    setEditData({ ...companyData });
     setSaveError("");
   };
 
@@ -71,7 +94,7 @@ function Profile() {
       setSaveLoading(true);
       setSaveError("");
 
-      const response = await fetch(`${BASE_API}/profile/me`, {
+      const response = await fetch(`${BASE_API}/profile/company`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -81,14 +104,12 @@ function Profile() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to update profile");
+        throw new Error("Failed to update company profile");
       }
 
       const updatedData = await response.json();
-      // Update the profile in the context
-      // Note: You might need to add a refresh function to UserContext
+      setCompanyData(updatedData);
       setEditMode(false);
-      window.location.reload(); // Temporary solution to refresh data
     } catch (err) {
       setSaveError(err.message || "Failed to update profile");
     } finally {
@@ -108,40 +129,9 @@ function Profile() {
     });
   };
 
-  const getInitials = (firstName, lastName) => {
-    const first = firstName?.charAt(0) || '';
-    const last = lastName?.charAt(0) || '';
-    return (first + last).toUpperCase() || 'U';
-  };
-
-  const handleCVUpload = async (e) => {
-    setUploadError("");
-    setUploadSuccess("");
-    const file = e.target.files[0];
-    if (!file) return;
-    if (file.type !== "application/pdf") {
-      setUploadError("Only PDF files are allowed.");
-      return;
-    }
-    const formData = new FormData();
-    formData.append("file", file);
-    setUploading(true);
-    try {
-      const res = await fetch(`${BASE_API}/upload-cv`, {
-        method: "POST",
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-      if (!res.ok) throw new Error("Failed to upload CV");
-      setUploadSuccess("CV uploaded successfully!");
-      window.location.reload(); // Refresh to show updated skills
-    } catch (err) {
-      setUploadError(err.message || "Failed to upload CV");
-    } finally {
-      setUploading(false);
-    }
+  const getCompanyInitials = (name) => {
+    if (!name) return 'C';
+    return name.split(' ').map(word => word.charAt(0)).join('').toUpperCase().slice(0, 2);
   };
 
   if (loading) {
@@ -154,7 +144,7 @@ function Profile() {
           color="#1976d2"
           sx={{ fontSize: { xs: '1.75rem', sm: '2.125rem' } }}
         >
-          Candidate Profile
+          Company Profile
         </Typography>
         <Grid container spacing={{ xs: 2, sm: 3 }}>
           <Grid item xs={12} md={10}>
@@ -201,15 +191,15 @@ function Profile() {
     );
   }
 
-  if (!profile) {
+  if (error) {
     return (
       <Box p={{ xs: 2, sm: 3 }}>
         <Alert severity="error" sx={{ mb: 3 }}>
-          Failed to load profile data
+          {error}
         </Alert>
         <Button 
           variant="contained" 
-          onClick={() => window.location.reload()}
+          onClick={fetchCompanyProfile}
           sx={{ width: { xs: '100%', sm: 'auto' } }}
         >
           Retry
@@ -234,7 +224,7 @@ function Profile() {
           color="#1976d2"
           sx={{ fontSize: { xs: '1.75rem', sm: '2.125rem' } }}
         >
-          Candidate Profile
+          Company Profile
         </Typography>
         {!editMode ? (
           <Button
@@ -308,46 +298,43 @@ function Profile() {
                   boxShadow: '0 4px 20px rgba(25, 118, 210, 0.3)',
                 }}
               >
-                {getInitials(profile.first_name, profile.last_name)}
+                {getCompanyInitials(companyData.name)}
               </Avatar>
               <Box sx={{ flex: 1, width: '100%' }}>
                 {editMode ? (
-                  <Stack spacing={2}>
-                    <TextField
-                      fullWidth
-                      label="First Name"
-                      value={editData.first_name || ''}
-                      onChange={(e) => handleInputChange('first_name', e.target.value)}
-                    />
-                    <TextField
-                      fullWidth
-                      label="Last Name"
-                      value={editData.last_name || ''}
-                      onChange={(e) => handleInputChange('last_name', e.target.value)}
-                    />
-                    <TextField
-                      fullWidth
-                      label="Current Title"
-                      value={editData.current_title || ''}
-                      onChange={(e) => handleInputChange('current_title', e.target.value)}
-                    />
-                  </Stack>
+                  <TextField
+                    fullWidth
+                    label="Company Name"
+                    value={editData.name || ''}
+                    onChange={(e) => handleInputChange('name', e.target.value)}
+                    sx={{ mb: 2 }}
+                  />
                 ) : (
-                  <>
-                    <Typography variant="h4" fontWeight={700} color="#1976d2" gutterBottom>
-                      {`${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'Candidate'}
-                    </Typography>
-                    <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
-                      {profile.current_title || 'Professional'}
-                    </Typography>
-                  </>
+                  <Typography variant="h4" fontWeight={700} color="#1976d2" gutterBottom>
+                    {companyData.name}
+                  </Typography>
+                )}
+                
+                {editMode ? (
+                  <TextField
+                    fullWidth
+                    multiline
+                    rows={3}
+                    label="Description"
+                    value={editData.description || ''}
+                    onChange={(e) => handleInputChange('description', e.target.value)}
+                  />
+                ) : (
+                  <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+                    {companyData.description}
+                  </Typography>
                 )}
               </Box>
             </Box>
 
             <Divider sx={{ my: 3 }} />
 
-            {/* Candidate Details */}
+            {/* Company Details */}
             <Grid container spacing={{ xs: 2, sm: 3 }}>
               <Grid item xs={12} sm={6}>
                 <Box sx={{ 
@@ -371,36 +358,7 @@ function Profile() {
                       />
                     ) : (
                       <Typography variant="body2" fontWeight={500}>
-                        {profile.email}
-                      </Typography>
-                    )}
-                  </Box>
-                </Box>
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <Box sx={{ 
-                  display: 'flex', 
-                  flexDirection: { xs: 'column', sm: 'row' },
-                  alignItems: { xs: 'flex-start', sm: 'center' }, 
-                  gap: { xs: 1, sm: 2 }, 
-                  mb: 2 
-                }}>
-                  <Phone color="primary" sx={{ mt: { xs: 0.5, sm: 0 } }} />
-                  <Box sx={{ flex: 1, width: '100%' }}>
-                    <Typography variant="caption" color="text.secondary">
-                      Phone Number
-                    </Typography>
-                    {editMode ? (
-                      <TextField
-                        fullWidth
-                        size="small"
-                        value={editData.phone || ''}
-                        onChange={(e) => handleInputChange('phone', e.target.value)}
-                      />
-                    ) : (
-                      <Typography variant="body2" fontWeight={500}>
-                        {profile.phone || 'Not provided'}
+                        {companyData.email}
                       </Typography>
                     )}
                   </Box>
@@ -429,7 +387,7 @@ function Profile() {
                       />
                     ) : (
                       <Typography variant="body2" fontWeight={500}>
-                        {profile.location || 'Not specified'}
+                        {companyData.location}
                       </Typography>
                     )}
                   </Box>
@@ -447,18 +405,18 @@ function Profile() {
                   <Work color="primary" sx={{ mt: { xs: 0.5, sm: 0 } }} />
                   <Box sx={{ flex: 1, width: '100%' }}>
                     <Typography variant="caption" color="text.secondary">
-                      Current Company
+                      Industry
                     </Typography>
                     {editMode ? (
                       <TextField
                         fullWidth
                         size="small"
-                        value={editData.company_name || ''}
-                        onChange={(e) => handleInputChange('company_name', e.target.value)}
+                        value={editData.industry || ''}
+                        onChange={(e) => handleInputChange('industry', e.target.value)}
                       />
                     ) : (
                       <Typography variant="body2" fontWeight={500}>
-                        {profile.company_name || 'Not specified'}
+                        {companyData.industry}
                       </Typography>
                     )}
                   </Box>
@@ -473,130 +431,41 @@ function Profile() {
                   gap: { xs: 1, sm: 2 }, 
                   mb: 2 
                 }}>
-                  <Business color="primary" sx={{ mt: { xs: 0.5, sm: 0 } }} />
+                  <Language color="primary" sx={{ mt: { xs: 0.5, sm: 0 } }} />
                   <Box sx={{ flex: 1, width: '100%' }}>
                     <Typography variant="caption" color="text.secondary">
-                      Years of Experience
+                      Website
                     </Typography>
                     {editMode ? (
                       <TextField
                         fullWidth
                         size="small"
-                        type="number"
-                        value={editData.years_experience || ''}
-                        onChange={(e) => handleInputChange('years_experience', e.target.value)}
+                        value={editData.website || ''}
+                        onChange={(e) => handleInputChange('website', e.target.value)}
                       />
                     ) : (
                       <Typography variant="body2" fontWeight={500}>
-                        {profile.years_experience || 0} years
+                        <a 
+                          href={companyData.website} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          style={{ color: '#1976d2', textDecoration: 'none' }}
+                        >
+                          {companyData.website}
+                        </a>
                       </Typography>
                     )}
                   </Box>
                 </Box>
               </Grid>
             </Grid>
-
-            {/* Skills Section */}
-            {profile?.extracted_skills && (
-              <>
-                <Divider sx={{ my: 3 }} />
-                <Typography variant="h6" fontWeight={600} mb={2} color="#1976d2">
-                  Skills
-                </Typography>
-                {profile.extracted_skills.standardized?.length > 0 && (
-                  <Box mb={2}>
-                    <Typography variant="caption" color="text.secondary" display="block" mb={1}>
-                      Standardized Skills:
-                    </Typography>
-                    <Box display="flex" flexWrap="wrap" gap={1}>
-                      {profile.extracted_skills.standardized.map((skill, idx) => (
-                        <Chip 
-                          key={`std-${idx}`} 
-                          label={skill} 
-                          color="success" 
-                          variant="outlined" 
-                          size="small"
-                        />
-                      ))}
-                    </Box>
-                  </Box>
-                )}
-                {profile.extracted_skills.raw?.length > 0 && (
-                  <Box>
-                    <Typography variant="caption" color="text.secondary" display="block" mb={1}>
-                      Raw Skills:
-                    </Typography>
-                    <Box display="flex" flexWrap="wrap" gap={1}>
-                      {profile.extracted_skills.raw.map((skill, idx) => (
-                        <Chip 
-                          key={`raw-${idx}`} 
-                          label={skill} 
-                          color="info" 
-                          variant="outlined" 
-                          size="small"
-                        />
-                      ))}
-                    </Box>
-                  </Box>
-                )}
-              </>
-            )}
-
-            {/* CV Upload Section */}
-            <Divider sx={{ my: 3 }} />
-            <Typography variant="h6" fontWeight={600} mb={2} color="#1976d2">
-              CV Management
-            </Typography>
-            
-            <Stack spacing={2}>
-              {profile?.cv_file_path && (
-                <Button
-                  variant="outlined"
-                  startIcon={<Download />}
-                  href={`${BASE_API}${profile.cv_file_path}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  sx={{ borderRadius: 2 }}
-                >
-                  Download Current CV
-                </Button>
-              )}
-              
-              <input
-                type="file"
-                accept="application/pdf"
-                style={{ display: "none" }}
-                ref={fileInputRef}
-                onChange={handleCVUpload}
-              />
-              <Button
-                variant="contained"
-                startIcon={uploading ? <CircularProgress size={20} /> : <CloudUpload />}
-                onClick={() => fileInputRef.current && fileInputRef.current.click()}
-                disabled={uploading}
-                sx={{ borderRadius: 2 }}
-              >
-                {uploading ? "Uploading..." : "Upload New CV (PDF)"}
-              </Button>
-              
-              {uploadError && (
-                <Alert severity="error">
-                  {uploadError}
-                </Alert>
-              )}
-              {uploadSuccess && (
-                <Alert severity="success">
-                  {uploadSuccess}
-                </Alert>
-              )}
-            </Stack>
           </Paper>
         </Grid>
 
         {/* Sidebar Stats */}
         <Grid item xs={12} md={2}>
           <Stack spacing={{ xs: 2, sm: 3 }}>
-            {/* Candidate Stats */}
+            {/* Company Stats */}
             <Paper elevation={3} sx={{ 
               p: { xs: 2, sm: 3 }, 
               borderRadius: 3 
@@ -608,7 +477,7 @@ function Profile() {
                 color="#1976d2"
                 sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
               >
-                Profile Information
+                Company Information
               </Typography>
               
               <Box sx={{ 
@@ -628,7 +497,7 @@ function Profile() {
                     fontWeight={500}
                     sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}
                   >
-                    {formatDate(profile.created_at)}
+                    {formatDate(companyData.created_at)}
                   </Typography>
                 </Box>
               </Box>
@@ -651,7 +520,6 @@ function Profile() {
               
               <Stack spacing={2}>
                 <Button
-                onClick={()=> navigate("/candidate/jobs")}
                   variant="outlined"
                   fullWidth
                   startIcon={<Description />}
@@ -661,20 +529,31 @@ function Profile() {
                     py: { xs: 1, sm: 1.5 }
                   }}
                 >
-                  View Jobs
+                  View Job Postings
                 </Button>
                 <Button
                   variant="outlined"
                   fullWidth
-                  startIcon={<TrendingUp />}
-                  onClick={() => navigate('/candidate/applications')}
+                  startIcon={<People />}
                   sx={{ 
                     borderRadius: 2,
                     fontSize: { xs: '0.8rem', sm: '0.875rem' },
                     py: { xs: 1, sm: 1.5 }
                   }}
                 >
-                  View Applications
+                  Manage Applications
+                </Button>
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  startIcon={<TrendingUp />}
+                  sx={{ 
+                    borderRadius: 2,
+                    fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                    py: { xs: 1, sm: 1.5 }
+                  }}
+                >
+                  View Analytics
                 </Button>
               </Stack>
             </Paper>
@@ -685,4 +564,4 @@ function Profile() {
   );
 }
 
-export default Profile;
+export default CompanyProfile; 

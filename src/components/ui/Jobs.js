@@ -104,21 +104,20 @@ function Jobs() {
   // Filtering logic
   const filteredJobs = jobs.filter((job) => {
     const matchesSearch =
-      job.company_name.toLowerCase().includes(search.toLowerCase()) ||
-      job.title.toLowerCase().includes(search.toLowerCase()) ||
-      (job.position &&
-        job.position.toLowerCase().includes(search.toLowerCase()));
+      (job.company_name?.toLowerCase() || '').includes(search.toLowerCase()) ||
+      (job.title?.toLowerCase() || '').includes(search.toLowerCase()) ||
+      (job.position?.toLowerCase() || '').includes(search.toLowerCase());
     const matchesEmployment = employmentType
-      ? job.employment_type.toLowerCase() === employmentType.toLowerCase()
+      ? (job.employment_type?.toLowerCase() || '') === employmentType.toLowerCase()
       : true;
     const matchesExperience = experienceLevel
-      ? job.experience_level.toLowerCase() === experienceLevel
+      ? (job.experience_level?.toLowerCase() || '') === experienceLevel
       : true;
     const matchesLocation = location
-      ? job.location.toLowerCase().includes(location.toLowerCase())
+      ? (job.location?.toLowerCase() || '').includes(location.toLowerCase())
       : true;
     const matchesSalary =
-      job.salary_min >= salaryRange[0] && job.salary_max <= salaryRange[1];
+      (job.salary_min || 0) >= salaryRange[0] && (job.salary_max || 0) <= salaryRange[1];
     return (
       matchesSearch &&
       matchesEmployment &&

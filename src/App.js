@@ -18,7 +18,9 @@ import { useAuth } from "./components/context/AuthContext";
 import Profile from "./components/pages/candidate/Profile";
 import Jobs from "./components/ui/Jobs";
 import JobApplyPage from "./components/pages/candidate/JobApplyPage";
+import Applications from "./components/pages/candidate/Applications";
 import CompanyStats from "./components/pages/company/CompanyStats";
+import CompanyProfile from "./components/pages/company/CompanyProfile";
 import CompanyLayout from "./components/ui/CompanyLayout";
 
 function App() {
@@ -50,6 +52,7 @@ function App() {
           <LinearProgress
             sx={{
               width: 200,
+              margin:"auto",
               height: 4,
               borderRadius: 2,
               bgcolor: "rgba(255,255,255,0.2)",
@@ -95,6 +98,7 @@ function App() {
             <Route path="home" element={<CandidateDashboard />} />
             <Route path="profile" element={<Profile />} />
             <Route path="jobs" element={<Jobs />} />
+            <Route path="applications" element={<Applications />} />
             <Route path="job/:id/apply" element={<JobApplyPage />} />
           </Route>
           {/* Company routes */}
@@ -102,6 +106,11 @@ function App() {
             <Route path="home" element={
               <CompanyLayout>
                 <CompanyDashboard />
+              </CompanyLayout>
+            } />
+            <Route path="profile" element={
+              <CompanyLayout>
+                <CompanyProfile />
               </CompanyLayout>
             } />
             <Route path="stats" element={
