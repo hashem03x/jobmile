@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/jobmile/static/css/main.e0a1edae.css",
-    "main.js": "/jobmile/static/js/main.72ca8dc3.js",
-    "index.html": "/jobmile/index.html",
-    "main.e0a1edae.css.map": "/jobmile/static/css/main.e0a1edae.css.map",
-    "main.72ca8dc3.js.map": "/jobmile/static/js/main.72ca8dc3.js.map"
+    "main.css": "/jobnile/static/css/main.e0a1edae.css",
+    "main.js": "/jobnile/static/js/main.f6a312e6.js",
+    "index.html": "/jobnile/index.html",
+    "main.e0a1edae.css.map": "/jobnile/static/css/main.e0a1edae.css.map",
+    "main.f6a312e6.js.map": "/jobnile/static/js/main.f6a312e6.js.map"
   },
   "entrypoints": [
     "static/css/main.e0a1edae.css",
-    "static/js/main.72ca8dc3.js"
+    "static/js/main.f6a312e6.js"
   ]
 }
