@@ -19,7 +19,6 @@ import {
   FormControl,
   InputLabel,
   Select,
-  Slider,
   Accordion,
   AccordionSummary,
   AccordionDetails,

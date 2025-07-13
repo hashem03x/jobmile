@@ -576,7 +576,7 @@ export default function LoginSignup() {
                 fontSize: { xs: "1.5rem", sm: "2.125rem" }
               }}
             >
-              Jobmile
+              Jobnile
             </Typography>
           </Box>
           {/* Tabs */}

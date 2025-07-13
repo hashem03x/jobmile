@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
+import Avatar from "@mui/material/Avatar";
 import MenuIcon from "@mui/icons-material/Menu";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
@@ -16,19 +17,62 @@ import BarChartIcon from "@mui/icons-material/BarChart";
 import PersonIcon from "@mui/icons-material/Person";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { NavLink } from "react-router-dom";
-import React from "react";
+import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import { useAuth } from "../context/AuthContext";
+import { useUser } from "../context/UserContext";
 
 export default function AppMenu() {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [profileImageError, setProfileImageError] = useState(false);
   const { logout, user } = useAuth();
+  const { userProfile: profile } = useUser();
+
+  const convertGCSUrlToPublicUrl = (gcsUrl) => {
+    if (!gcsUrl) return null;
+    
+    // Convert gs:// URL to public HTTP URL
+    if (gcsUrl.startsWith("gs://")) {
+      const path = gcsUrl.replace("gs://", "");
+      return `https://storage.googleapis.com/${path}`;
+    }
+    
+    // If it's already an HTTP URL, return as is
+    if (gcsUrl.startsWith("http://") || gcsUrl.startsWith("https://")) {
+      return gcsUrl;
+    }
+    
+    return null;
+  };
+
+  const getInitials = (firstName, lastName) => {
+    const first = firstName?.charAt(0) || "";
+    const last = lastName?.charAt(0) || "";
+    return (first + last).toUpperCase() || "U";
+  };
   const menuLinks =
     user?.user_type === "candidate"
       ? [
           { label: "Home", to: "/candidate/home", icon: <HomeIcon /> },
           { label: "Jobs", to: "/candidate/jobs", icon: <WorkIcon /> },
-          { label: "Profile", to: "/candidate/profile", icon: <PersonIcon /> },
+          { 
+            label: "Profile", 
+            to: "/candidate/profile", 
+            icon: (
+              <Avatar
+                src={profileImageError ? undefined : convertGCSUrlToPublicUrl(profile?.profile_picture_path)}
+                onError={() => setProfileImageError(true)}
+                sx={{
+                  width: 20,
+                  height: 20,
+                  fontSize: "0.75rem",
+                  border: "1px solid #1976d2",
+                }}
+              >
+                {getInitials(profile?.first_name, profile?.last_name)}
+              </Avatar>
+            )
+          },
           {
             label: "Logout",
             to: "/login",
@@ -39,7 +83,24 @@ export default function AppMenu() {
       : [
           { label: "Home", to: "/company/home", icon: <HomeIcon /> },
           { label: "Stats", to: "/company/stats", icon: <BarChartIcon /> },
-          { label: "Profile", to: "/company/profile", icon: <PersonIcon /> },
+          { 
+            label: "Profile", 
+            to: "/company/profile", 
+            icon: (
+              <Avatar
+                src={profileImageError ? undefined : convertGCSUrlToPublicUrl(profile?.profile_picture_path)}
+                onError={() => setProfileImageError(true)}
+                sx={{
+                  width: 20,
+                  height: 20,
+                  fontSize: "0.75rem",
+                  border: "1px solid #1976d2",
+                }}
+              >
+                {getInitials(profile?.first_name, profile?.last_name)}
+              </Avatar>
+            )
+          },
           {
             label: "Logout",
             to: "/login",
@@ -74,8 +135,10 @@ export default function AppMenu() {
             component="div"
             sx={{ flexGrow: 1, display: { sm: "block" } }}
           >
-            Jobmile
+            Jobnile
           </Typography>
+          
+          
           {/* Desktop menu items */}
           <Box sx={{ display: { xs: "none", md: "flex" }, ml: 3, gap: 1 }}>
             {menuLinks.map((item) => (
@@ -135,7 +198,30 @@ export default function AppMenu() {
           onClick={handleDrawerToggle}
           onKeyDown={handleDrawerToggle}
         >
-          <Divider />
+          {/* Profile Section in Drawer */}
+          <Box sx={{ p: 3, textAlign: "center", borderBottom: "1px solid #e0e0e0" }}>
+            <Avatar
+              src={profileImageError ? undefined : convertGCSUrlToPublicUrl(profile?.profile_picture_path)}
+              onError={() => setProfileImageError(true)}
+              sx={{
+                width: 60,
+                height: 60,
+                mx: "auto",
+                mb: 2,
+                border: "3px solid #1976d2",
+                boxShadow: "0 4px 12px rgba(25, 118, 210, 0.2)",
+              }}
+            >
+              {getInitials(profile?.first_name, profile?.last_name)}
+            </Avatar>
+            <Typography variant="h6" fontWeight={600} color="#1976d2" mb={0.5}>
+              {profile ? `${profile.first_name || ""} ${profile.last_name || ""}`.trim() : "User"}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {profile?.current_title || "Professional"}
+            </Typography>
+          </Box>
+          
           <List sx={{ mt: 1 }}>
             {menuLinks.map((item) => (
               <ListItem
